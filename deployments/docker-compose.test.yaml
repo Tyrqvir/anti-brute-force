@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  integration_test:
+    container_name: integration_test
+    build:
+      context: ./..
+      dockerfile: ./build/test/Dockerfile
+      args:
+        CONFIG_FILE_EXTERNAL: "./configs/config.toml"
+    environment:
+      REDIS_DSN: "redis:6379"
+      GRPC_ADDRESS: "server:8889"
+    depends_on:
+      - server
+      - redis
+
+networks:
+  default:
+    name: test_network
+
+volumes:
+  redis:
+    name: redis_data_test
