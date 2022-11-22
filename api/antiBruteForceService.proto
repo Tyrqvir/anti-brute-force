@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "../pkg/anti-brute-force/api";
+
+message AuthorisationRequest {
+  string login = 1;
+  string password = 2;
+  string ip = 3;
+}
+
+message AuthorisationResponse {
+  bool ok = 1;
+}
+
+message ResetBucketRequest {
+  string login = 1;
+  string ip = 2;
+}
+
+message AddToBlackListRequest {
+  string login = 1;
+}
+
+message ListCases {
+  string subNetwork = 1;
+}
+
+message ExistInListResponse {
+  int64 ok = 1;
+}
+
+service AntiBruteForceService {
+  rpc Authorisation(AuthorisationRequest) returns (AuthorisationResponse);
+  rpc ResetBucket(ResetBucketRequest) returns (google.protobuf.Empty);
+  rpc AddToBlackList(ListCases) returns (google.protobuf.Empty);
+  rpc RemoveFromBlackList(ListCases) returns (google.protobuf.Empty);
+  rpc AddToWhiteList(ListCases) returns (google.protobuf.Empty);
+  rpc RemoveFromWhiteList(ListCases) returns (google.protobuf.Empty);
+  rpc ExistInWhiteList(ListCases) returns (ExistInListResponse);
+  rpc ExistInBlackList(ListCases) returns (ExistInListResponse);
+}

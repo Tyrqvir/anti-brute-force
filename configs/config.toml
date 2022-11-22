@@ -1,0 +1,13 @@
+[logger]
+level = "debug" # should be "info", "warn", "info", "error". See logger.go in logger package
+
+[grpc]
+address = ":8889"
+
+[redis]
+dsn = "127.0.0.1:6379"
+
+[rateLimit]
+loginPerMinute = 10
+passwordPerMinute = 100
+ipPerMinute = 1000
