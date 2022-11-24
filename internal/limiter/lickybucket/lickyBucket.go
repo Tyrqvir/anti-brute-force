@@ -29,52 +29,68 @@ func New(storage storage.Storage, logger logger.Logger) *Limiter {
 	}
 }
 
-func (l *Limiter) IsLimit(ctx context.Context, request *api.AuthorisationRequest) bool {
+func (l *Limiter) IsLimit(ctx context.Context, request *api.AccessCheckRequest) bool {
 	isLimit := false
 
-	for i := 0; i < 3; i++ {
-		wg.Add(1)
+	wg.Add(3)
 
-		go func(i int) {
-			defer wg.Done()
+	go func() {
+		defer wg.Done()
 
-			if isLimit {
-				return
-			}
+		if isLimit {
+			return
+		}
 
-			mutex.Lock()
-			defer mutex.Unlock()
+		mutex.Lock()
+		defer mutex.Unlock()
 
-			switch i {
-			case 0:
-				result := l.LimitByLogin(ctx, request)
+		result := l.LimitByLogin(ctx, request)
 
-				if result {
-					isLimit = result
-				}
-			case 1:
-				result := l.LimitByPassword(ctx, request)
+		if result {
+			isLimit = result
+		}
+	}()
 
-				if result {
-					isLimit = result
-				}
+	go func() {
+		defer wg.Done()
 
-			case 2:
-				result := l.LimitByIP(ctx, request)
+		if isLimit {
+			return
+		}
 
-				if result {
-					isLimit = result
-				}
-			}
-		}(i)
-	}
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		result := l.LimitByPassword(ctx, request)
+
+		if result {
+			isLimit = result
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		if isLimit {
+			return
+		}
+
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		result := l.LimitByIP(ctx, request)
+
+		if result {
+			isLimit = result
+		}
+	}()
 
 	wg.Wait()
 
 	return isLimit
 }
 
-func (l *Limiter) LimitByIP(ctx context.Context, request *api.AuthorisationRequest) bool {
+func (l *Limiter) LimitByIP(ctx context.Context, request *api.AccessCheckRequest) bool {
 	storeLimitByIP, err := l.storage.StoreLimitByIP(ctx, request.GetIp())
 	if err != nil {
 		l.logger.Errorf("error on store: %v", err)
@@ -88,7 +104,7 @@ func (l *Limiter) LimitByIP(ctx context.Context, request *api.AuthorisationReque
 	return false
 }
 
-func (l *Limiter) LimitByLogin(ctx context.Context, request *api.AuthorisationRequest) bool {
+func (l *Limiter) LimitByLogin(ctx context.Context, request *api.AccessCheckRequest) bool {
 	storeLimitByLogin, err := l.storage.StoreLimitByLogin(ctx, request.GetLogin())
 	if err != nil {
 		l.logger.Errorf("error on store: %v", err)
@@ -102,7 +118,7 @@ func (l *Limiter) LimitByLogin(ctx context.Context, request *api.AuthorisationRe
 	return false
 }
 
-func (l *Limiter) LimitByPassword(ctx context.Context, request *api.AuthorisationRequest) bool {
+func (l *Limiter) LimitByPassword(ctx context.Context, request *api.AccessCheckRequest) bool {
 	storeLimitByPassword, err := l.storage.StoreLimitByPassword(ctx, request.GetPassword())
 	if err != nil {
 		l.logger.Errorf("error on store: %v", err)

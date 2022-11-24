@@ -11,8 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var ctx = context.Background()
-
 func dummyLimiter(storage *mocks.Storage) *Limiter {
 	logger := appLogger.New("info")
 	return &Limiter{
@@ -21,8 +19,8 @@ func dummyLimiter(storage *mocks.Storage) *Limiter {
 	}
 }
 
-func dummyRequest() *api.AuthorisationRequest {
-	return &api.AuthorisationRequest{
+func dummyRequest() *api.AccessCheckRequest {
+	return &api.AccessCheckRequest{
 		Login:    "login",
 		Password: "password",
 		Ip:       "192.168.1.1",
@@ -30,93 +28,161 @@ func dummyRequest() *api.AuthorisationRequest {
 }
 
 func TestLimiter_limitByLogin(t *testing.T) {
-	t.Run("normal authorization by login", func(t *testing.T) {
-		storage := &mocks.Storage{}
-		storage.On("StoreLimitByLogin", ctx, "login").Return(&redis_rate.Result{
-			Allowed: 1,
-		}, nil)
+	ctx := context.Background()
 
-		l := dummyLimiter(storage)
-
-		isLimit := l.LimitByLogin(ctx, dummyRequest())
-
-		assert.False(t, isLimit)
-	})
-
-	t.Run("ddos authorization by login", func(t *testing.T) {
-		storage := &mocks.Storage{}
-		storage.On("StoreLimitByLogin", ctx, "login").Return(&redis_rate.Result{
-			Allowed: 0,
-		}, nil)
-
-		l := dummyLimiter(storage)
-
-		isLimit := l.LimitByLogin(ctx, dummyRequest())
-
-		assert.True(t, isLimit)
-	})
+	type args struct {
+		ctx     context.Context
+		request *api.AccessCheckRequest
+	}
+	tests := []struct {
+		name    string
+		prepare func(s *mocks.Storage)
+		args    args
+		want    bool
+	}{
+		{
+			name: "normal access check by login",
+			prepare: func(s *mocks.Storage) {
+				s.On("StoreLimitByLogin", ctx, "login").Return(&redis_rate.Result{
+					Allowed: 1,
+				}, nil)
+			},
+			args: args{
+				ctx:     ctx,
+				request: dummyRequest(),
+			},
+			want: false,
+		},
+		{
+			name: "ddos access check by login",
+			prepare: func(s *mocks.Storage) {
+				s.On("StoreLimitByLogin", ctx, "login").Return(&redis_rate.Result{
+					Allowed: 0,
+				}, nil)
+			},
+			args: args{
+				ctx:     ctx,
+				request: dummyRequest(),
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			store := &mocks.Storage{}
+			tt.prepare(store)
+			l := dummyLimiter(store)
+			assert.Equalf(t, tt.want, l.LimitByLogin(tt.args.ctx, tt.args.request), "LimitByLogin(%v, %v)", tt.args.ctx, tt.args.request)
+		})
+	}
 }
 
 func TestLimiter_limitByPassword(t *testing.T) {
-	t.Run("normal authorization by password", func(t *testing.T) {
-		storage := &mocks.Storage{}
-		storage.On("StoreLimitByPassword", ctx, "password").Return(&redis_rate.Result{
-			Allowed: 1,
-		}, nil)
+	ctx := context.Background()
 
-		l := dummyLimiter(storage)
-
-		isLimit := l.LimitByPassword(ctx, dummyRequest())
-
-		assert.False(t, isLimit)
-	})
-
-	t.Run("ddos authorization by password", func(t *testing.T) {
-		storage := &mocks.Storage{}
-		storage.On("StoreLimitByPassword", ctx, "password").Return(&redis_rate.Result{
-			Allowed: 0,
-		}, nil)
-
-		l := dummyLimiter(storage)
-
-		isLimit := l.LimitByPassword(ctx, dummyRequest())
-
-		assert.True(t, isLimit)
-	})
+	type args struct {
+		ctx     context.Context
+		request *api.AccessCheckRequest
+	}
+	tests := []struct {
+		name    string
+		prepare func(s *mocks.Storage)
+		args    args
+		want    bool
+	}{
+		{
+			name: "normal access check by password",
+			prepare: func(s *mocks.Storage) {
+				s.On("StoreLimitByPassword", ctx, "password").Return(&redis_rate.Result{
+					Allowed: 1,
+				}, nil)
+			},
+			args: args{
+				ctx:     ctx,
+				request: dummyRequest(),
+			},
+			want: false,
+		},
+		{
+			name: "ddos access check by password",
+			prepare: func(s *mocks.Storage) {
+				s.On("StoreLimitByPassword", ctx, "password").Return(&redis_rate.Result{
+					Allowed: 0,
+				}, nil)
+			},
+			args: args{
+				ctx:     ctx,
+				request: dummyRequest(),
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			store := &mocks.Storage{}
+			tt.prepare(store)
+			l := dummyLimiter(store)
+			assert.Equalf(t, tt.want, l.LimitByPassword(tt.args.ctx, tt.args.request), "LimitByPassword(%v, %v)", tt.args.ctx, tt.args.request)
+		})
+	}
 }
 
 func TestLimiter_limitByIP(t *testing.T) {
-	t.Run("normal authorization by ip", func(t *testing.T) {
-		storage := &mocks.Storage{}
-		storage.On("StoreLimitByIP", ctx, "192.168.1.1").Return(&redis_rate.Result{
-			Allowed: 1,
-		}, nil)
+	ctx := context.Background()
 
-		l := dummyLimiter(storage)
-
-		isLimit := l.LimitByIP(ctx, dummyRequest())
-
-		assert.False(t, isLimit)
-	})
-
-	t.Run("ddos authorization by ip", func(t *testing.T) {
-		storage := &mocks.Storage{}
-		storage.On("StoreLimitByIP", ctx, "192.168.1.1").Return(&redis_rate.Result{
-			Allowed: 0,
-		}, nil)
-
-		l := dummyLimiter(storage)
-
-		isLimit := l.LimitByIP(ctx, dummyRequest())
-
-		assert.True(t, isLimit)
-	})
+	type args struct {
+		ctx     context.Context
+		request *api.AccessCheckRequest
+	}
+	tests := []struct {
+		name    string
+		prepare func(s *mocks.Storage)
+		args    args
+		want    bool
+	}{
+		{
+			name: "normal access check by ip",
+			prepare: func(s *mocks.Storage) {
+				s.On("StoreLimitByIP", ctx, "192.168.1.1").Return(&redis_rate.Result{
+					Allowed: 1,
+				}, nil)
+			},
+			args: args{
+				ctx:     ctx,
+				request: dummyRequest(),
+			},
+			want: false,
+		},
+		{
+			name: "ddos access check by ip",
+			prepare: func(s *mocks.Storage) {
+				s.On("StoreLimitByIP", ctx, "192.168.1.1").Return(&redis_rate.Result{
+					Allowed: 0,
+				}, nil)
+			},
+			args: args{
+				ctx:     ctx,
+				request: dummyRequest(),
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			store := &mocks.Storage{}
+			tt.prepare(store)
+			l := dummyLimiter(store)
+			assert.Equalf(t, tt.want, l.LimitByIP(tt.args.ctx, tt.args.request), "LimitByIP(%v, %v)", tt.args.ctx, tt.args.request)
+		})
+	}
 }
 
 func TestLimiter_IsLimit(t *testing.T) {
-	storage := &mocks.Storage{}
+	ctx := context.Background()
 
-	l := dummyLimiter(storage)
+	store := &mocks.Storage{}
+
+	l := dummyLimiter(store)
 
 	request := dummyRequest()
 
@@ -124,9 +190,9 @@ func TestLimiter_IsLimit(t *testing.T) {
 		result := &redis_rate.Result{
 			Allowed: 1,
 		}
-		storage.On("StoreLimitByIP", ctx, "192.168.1.1").Return(result, nil)
-		storage.On("StoreLimitByLogin", ctx, "login").Return(result, nil)
-		storage.On("StoreLimitByPassword", ctx, "password").Return(result, nil)
+		store.On("StoreLimitByIP", ctx, "192.168.1.1").Return(result, nil)
+		store.On("StoreLimitByLogin", ctx, "login").Return(result, nil)
+		store.On("StoreLimitByPassword", ctx, "password").Return(result, nil)
 
 		isLimit := l.IsLimit(ctx, request)
 

@@ -19,7 +19,7 @@ type AntiBruteForceCase struct {
 
 //go:generate mockery --name AntiBruteForceServiceServer --dir ./ --output ./../../internal/mocks
 type AntiBruteForceServiceServer interface {
-	Authorisation(context.Context, *api.AuthorisationRequest) (*api.AuthorisationResponse, error)
+	AccessCheck(context.Context, *api.AccessCheckRequest) (*api.AccessCheckResponse, error)
 	ResetBucket(context.Context, *api.ResetBucketRequest) (*emptypb.Empty, error)
 	AddToBlackList(context.Context, *api.ListCases) (*emptypb.Empty, error)
 	RemoveFromBlackList(context.Context, *api.ListCases) (*emptypb.Empty, error)
@@ -39,20 +39,20 @@ func NewUseCase(limiter *lickybucket.Limiter, storage *redis.StorageRedis) *Anti
 
 func (u AntiBruteForceCase) Authorisation(
 	ctx context.Context,
-	request *api.AuthorisationRequest,
-) (*api.AuthorisationResponse, error) {
+	request *api.AccessCheckRequest,
+) (*api.AccessCheckResponse, error) {
 	ip := net.ParseIP(request.GetIp())
 
 	accessibility, notExistInLists := u.storage.CheckAccessibilityByLists(ctx, ip)
 
 	if notExistInLists {
 		isLimit := u.limiter.IsLimit(ctx, request)
-		return &api.AuthorisationResponse{
+		return &api.AccessCheckResponse{
 			Ok: !isLimit,
 		}, nil
 	}
 
-	return &api.AuthorisationResponse{
+	return &api.AccessCheckResponse{
 		Ok: accessibility,
 	}, nil
 }

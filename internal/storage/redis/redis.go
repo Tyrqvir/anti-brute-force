@@ -47,8 +47,7 @@ func New(config *config.Config, logger logger.Logger) *StorageRedis {
 }
 
 func (s *StorageRedis) FlushAll(ctx context.Context) {
-	err := s.rdb.FlushAll(ctx)
-	if err != nil {
+	if err := s.rdb.FlushAll(ctx); err != nil {
 		s.logger.Error("error on flash all from db")
 	}
 
@@ -56,8 +55,7 @@ func (s *StorageRedis) FlushAll(ctx context.Context) {
 }
 
 func (s *StorageRedis) FlushLimitByBucket(ctx context.Context, bucket string) {
-	err := s.limiter.Reset(ctx, bucket)
-	if err != nil {
+	if err := s.limiter.Reset(ctx, bucket); err != nil {
 		s.logger.Errorf("error on reset rate limit by bucket %s: %v", bucket, err)
 	}
 

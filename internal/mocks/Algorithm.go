@@ -21,11 +21,11 @@ func (_m *Algorithm) ClearBucket(ctx context.Context, request *api.ResetBucketRe
 }
 
 // IsLimit provides a mock function with given fields: ctx, request
-func (_m *Algorithm) IsLimit(ctx context.Context, request *api.AuthorisationRequest) bool {
+func (_m *Algorithm) IsLimit(ctx context.Context, request *api.AccessCheckRequest) bool {
 	ret := _m.Called(ctx, request)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(context.Context, *api.AuthorisationRequest) bool); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AccessCheckRequest) bool); ok {
 		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Get(0).(bool)
@@ -35,11 +35,11 @@ func (_m *Algorithm) IsLimit(ctx context.Context, request *api.AuthorisationRequ
 }
 
 // LimitByIP provides a mock function with given fields: ctx, request
-func (_m *Algorithm) LimitByIP(ctx context.Context, request *api.AuthorisationRequest) bool {
+func (_m *Algorithm) LimitByIP(ctx context.Context, request *api.AccessCheckRequest) bool {
 	ret := _m.Called(ctx, request)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(context.Context, *api.AuthorisationRequest) bool); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AccessCheckRequest) bool); ok {
 		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Get(0).(bool)
@@ -49,11 +49,11 @@ func (_m *Algorithm) LimitByIP(ctx context.Context, request *api.AuthorisationRe
 }
 
 // LimitByLogin provides a mock function with given fields: ctx, request
-func (_m *Algorithm) LimitByLogin(ctx context.Context, request *api.AuthorisationRequest) bool {
+func (_m *Algorithm) LimitByLogin(ctx context.Context, request *api.AccessCheckRequest) bool {
 	ret := _m.Called(ctx, request)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(context.Context, *api.AuthorisationRequest) bool); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AccessCheckRequest) bool); ok {
 		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Get(0).(bool)
@@ -63,11 +63,11 @@ func (_m *Algorithm) LimitByLogin(ctx context.Context, request *api.Authorisatio
 }
 
 // LimitByPassword provides a mock function with given fields: ctx, request
-func (_m *Algorithm) LimitByPassword(ctx context.Context, request *api.AuthorisationRequest) bool {
+func (_m *Algorithm) LimitByPassword(ctx context.Context, request *api.AccessCheckRequest) bool {
 	ret := _m.Called(ctx, request)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(context.Context, *api.AuthorisationRequest) bool); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AccessCheckRequest) bool); ok {
 		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Get(0).(bool)

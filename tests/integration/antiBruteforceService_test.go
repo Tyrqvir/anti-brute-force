@@ -199,7 +199,7 @@ func (service *antiBruteForceServiceTest) connectToServer(address string) error 
 
 func (service *antiBruteForceServiceTest) iSendRequestsToAuthorisation(count int) error {
 	for i := 0; i <= count; i++ {
-		authorisation, err := service.client.Authorisation(context.Background(), &api.AuthorisationRequest{
+		authorisation, err := service.client.AccessCheck(context.Background(), &api.AccessCheckRequest{
 			Login:    service.login,
 			Password: service.password,
 			Ip:       service.ip,

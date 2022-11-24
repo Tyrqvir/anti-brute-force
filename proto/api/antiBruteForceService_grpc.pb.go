@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AntiBruteForceServiceClient interface {
-	Authorisation(ctx context.Context, in *AuthorisationRequest, opts ...grpc.CallOption) (*AuthorisationResponse, error)
+	AccessCheck(ctx context.Context, in *AccessCheckRequest, opts ...grpc.CallOption) (*AccessCheckResponse, error)
 	ResetBucket(ctx context.Context, in *ResetBucketRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AddToBlackList(ctx context.Context, in *ListCases, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RemoveFromBlackList(ctx context.Context, in *ListCases, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -41,9 +41,9 @@ func NewAntiBruteForceServiceClient(cc grpc.ClientConnInterface) AntiBruteForceS
 	return &antiBruteForceServiceClient{cc}
 }
 
-func (c *antiBruteForceServiceClient) Authorisation(ctx context.Context, in *AuthorisationRequest, opts ...grpc.CallOption) (*AuthorisationResponse, error) {
-	out := new(AuthorisationResponse)
-	err := c.cc.Invoke(ctx, "/AntiBruteForceService/Authorisation", in, out, opts...)
+func (c *antiBruteForceServiceClient) AccessCheck(ctx context.Context, in *AccessCheckRequest, opts ...grpc.CallOption) (*AccessCheckResponse, error) {
+	out := new(AccessCheckResponse)
+	err := c.cc.Invoke(ctx, "/AntiBruteForceService/AccessCheck", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (c *antiBruteForceServiceClient) ExistInBlackList(ctx context.Context, in *
 // All implementations must embed UnimplementedAntiBruteForceServiceServer
 // for forward compatibility
 type AntiBruteForceServiceServer interface {
-	Authorisation(context.Context, *AuthorisationRequest) (*AuthorisationResponse, error)
+	AccessCheck(context.Context, *AccessCheckRequest) (*AccessCheckResponse, error)
 	ResetBucket(context.Context, *ResetBucketRequest) (*emptypb.Empty, error)
 	AddToBlackList(context.Context, *ListCases) (*emptypb.Empty, error)
 	RemoveFromBlackList(context.Context, *ListCases) (*emptypb.Empty, error)
@@ -132,8 +132,8 @@ type AntiBruteForceServiceServer interface {
 type UnimplementedAntiBruteForceServiceServer struct {
 }
 
-func (UnimplementedAntiBruteForceServiceServer) Authorisation(context.Context, *AuthorisationRequest) (*AuthorisationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Authorisation not implemented")
+func (UnimplementedAntiBruteForceServiceServer) AccessCheck(context.Context, *AccessCheckRequest) (*AccessCheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AccessCheck not implemented")
 }
 func (UnimplementedAntiBruteForceServiceServer) ResetBucket(context.Context, *ResetBucketRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetBucket not implemented")
@@ -169,20 +169,20 @@ func RegisterAntiBruteForceServiceServer(s grpc.ServiceRegistrar, srv AntiBruteF
 	s.RegisterService(&AntiBruteForceService_ServiceDesc, srv)
 }
 
-func _AntiBruteForceService_Authorisation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AuthorisationRequest)
+func _AntiBruteForceService_AccessCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccessCheckRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AntiBruteForceServiceServer).Authorisation(ctx, in)
+		return srv.(AntiBruteForceServiceServer).AccessCheck(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/AntiBruteForceService/Authorisation",
+		FullMethod: "/AntiBruteForceService/AccessCheck",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AntiBruteForceServiceServer).Authorisation(ctx, req.(*AuthorisationRequest))
+		return srv.(AntiBruteForceServiceServer).AccessCheck(ctx, req.(*AccessCheckRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -321,8 +321,8 @@ var AntiBruteForceService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AntiBruteForceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Authorisation",
-			Handler:    _AntiBruteForceService_Authorisation_Handler,
+			MethodName: "AccessCheck",
+			Handler:    _AntiBruteForceService_AccessCheck_Handler,
 		},
 		{
 			MethodName: "ResetBucket",

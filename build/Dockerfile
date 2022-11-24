@@ -8,21 +8,21 @@ ENV CODE_DIR /go/src/
 
 WORKDIR ${CODE_DIR}
 
-# Кэшируем слои с модулями
+# Cache layer with modules
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
 COPY . ${CODE_DIR}
 
-# Собираем статический бинарник Go (без зависимостей на Си API),
-# иначе он не будет работать в alpine образе.
+# Building a static Go binary (no CI dependencies),
+# otherwise it won't work in alpine image.
 ARG LDFLAGS
 RUN CGO_ENABLED=0 go build \
         -ldflags "$LDFLAGS" \
         -o ${BIN_FILE} ./cmd/${APP_FOLDER}
 
-# На выходе тонкий образ
+# Make thin image
 FROM alpine:latest
 
 ARG CONFIG_FILE_EXTERNAL
