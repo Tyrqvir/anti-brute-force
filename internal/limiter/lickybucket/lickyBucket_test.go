@@ -27,7 +27,7 @@ func dummyRequest() *api.AccessCheckRequest {
 	}
 }
 
-func TestLimiter_limitByLogin(t *testing.T) {
+func TestLimiter_limitByLogin(t *testing.T) { //nolint:dupl
 	ctx := context.Background()
 
 	type args struct {
@@ -72,12 +72,19 @@ func TestLimiter_limitByLogin(t *testing.T) {
 			store := &mocks.Storage{}
 			tt.prepare(store)
 			l := dummyLimiter(store)
-			assert.Equalf(t, tt.want, l.LimitByLogin(tt.args.ctx, tt.args.request), "LimitByLogin(%v, %v)", tt.args.ctx, tt.args.request)
+			assert.Equalf(
+				t,
+				tt.want,
+				l.LimitByLogin(tt.args.ctx, tt.args.request),
+				"LimitByLogin(%v, %v)",
+				tt.args.ctx,
+				tt.args.request,
+			)
 		})
 	}
 }
 
-func TestLimiter_limitByPassword(t *testing.T) {
+func TestLimiter_limitByPassword(t *testing.T) { //nolint:dupl
 	ctx := context.Background()
 
 	type args struct {
@@ -122,12 +129,19 @@ func TestLimiter_limitByPassword(t *testing.T) {
 			store := &mocks.Storage{}
 			tt.prepare(store)
 			l := dummyLimiter(store)
-			assert.Equalf(t, tt.want, l.LimitByPassword(tt.args.ctx, tt.args.request), "LimitByPassword(%v, %v)", tt.args.ctx, tt.args.request)
+			assert.Equalf(
+				t,
+				tt.want,
+				l.LimitByPassword(tt.args.ctx, tt.args.request),
+				"LimitByPassword(%v, %v)",
+				tt.args.ctx,
+				tt.args.request,
+			)
 		})
 	}
 }
 
-func TestLimiter_limitByIP(t *testing.T) {
+func TestLimiter_limitByIP(t *testing.T) { //nolint:dupl
 	ctx := context.Background()
 
 	type args struct {
@@ -172,7 +186,12 @@ func TestLimiter_limitByIP(t *testing.T) {
 			store := &mocks.Storage{}
 			tt.prepare(store)
 			l := dummyLimiter(store)
-			assert.Equalf(t, tt.want, l.LimitByIP(tt.args.ctx, tt.args.request), "LimitByIP(%v, %v)", tt.args.ctx, tt.args.request)
+			assert.Equalf(
+				t,
+				tt.want,
+				l.LimitByIP(tt.args.ctx, tt.args.request),
+				"LimitByIP(%v, %v)", tt.args.ctx, tt.args.request,
+			)
 		})
 	}
 }

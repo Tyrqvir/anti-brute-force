@@ -297,10 +297,11 @@ type TestSuite struct {
 // all configuration options from flags.
 //
 // The exit codes may vary from:
-//  0 - success
-//  1 - failed
-//  2 - command line usage error
-//  128 - or higher, os signal related error exit codes
+//
+//	0 - success
+//	1 - failed
+//	2 - command line usage error
+//	128 - or higher, os signal related error exit codes
 //
 // If there are flag related errors they will be directed to os.Stderr
 func (ts TestSuite) Run() int {

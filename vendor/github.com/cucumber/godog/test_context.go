@@ -25,12 +25,12 @@ type Step = messages.PickleStep
 // instead of returning an error in step func
 // it is possible to return combined steps:
 //
-//   func multistep(name string) godog.Steps {
-//     return godog.Steps{
-//       fmt.Sprintf(`an user named "%s"`, name),
-//       fmt.Sprintf(`user "%s" is authenticated`, name),
-//     }
-//   }
+//	func multistep(name string) godog.Steps {
+//	  return godog.Steps{
+//	    fmt.Sprintf(`an user named "%s"`, name),
+//	    fmt.Sprintf(`user "%s" is authenticated`, name),
+//	  }
+//	}
 //
 // These steps will be matched and executed in
 // sequential order. The first one which fails
