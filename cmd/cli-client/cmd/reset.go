@@ -14,7 +14,7 @@ var ResetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset bucket",
 	Run: func(cmd *cobra.Command, args []string) {
-		client := grpc.NewClient(globalCfg)
+		client := grpc.NewClient(cmd.PersistentFlags().Lookup("grpcAddress").Value.String())
 		ctx := context.Background()
 
 		_, err := client.AntiBruteForceServiceClient.ResetBucket(ctx, &api.ResetBucketRequest{
@@ -30,4 +30,7 @@ var ResetCmd = &cobra.Command{
 func init() {
 	ResetCmd.PersistentFlags().StringP("login", "l", "", "login for reset bucket")
 	ResetCmd.PersistentFlags().StringP("ip", "i", "", "password for reset bucket")
+	ResetCmd.PersistentFlags().StringP(
+		"grpcAddress", "a", "", "grpcAddress",
+	)
 }

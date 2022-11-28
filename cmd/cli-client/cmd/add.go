@@ -15,7 +15,7 @@ var AddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add network to black/white list",
 	Run: func(cmd *cobra.Command, args []string) {
-		client := grpc.NewClient(globalCfg)
+		client := grpc.NewClient(cmd.PersistentFlags().Lookup("grpcAddress").Value.String())
 		ctx := context.Background()
 
 		switch cmd.PersistentFlags().Lookup("kindOfList").Value.String() {
@@ -43,5 +43,8 @@ func init() {
 	)
 	AddCmd.PersistentFlags().StringP(
 		"kindOfList", "k", blackListKey, fmt.Sprintf("%s or %s", blackListKey, whiteListKey),
+	)
+	AddCmd.PersistentFlags().StringP(
+		"grpcAddress", "a", "", "grpcAddress",
 	)
 }

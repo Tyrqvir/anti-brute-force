@@ -63,3 +63,5 @@ $ make integration-tests
 ```bash
 $ make build
 ```
+
+## Команды для клиента через CLI находятся в ```./cmd/cli-client```
