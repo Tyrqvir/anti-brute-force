@@ -19,15 +19,23 @@ type AntiBruteForceCase struct {
 
 //go:generate mockery --name AntiBruteForceServiceServer --dir ./ --output ./../../internal/mocks
 type AntiBruteForceServiceServer interface {
+	mustEmbedUnimplementedAntiBruteForceServiceServer()
+	WhiteList
+	BlackList
 	AccessCheck(context.Context, *api.AccessCheckRequest) (*api.AccessCheckResponse, error)
 	ResetBucket(context.Context, *api.ResetBucketRequest) (*emptypb.Empty, error)
-	AddToBlackList(context.Context, *api.ListCases) (*emptypb.Empty, error)
-	RemoveFromBlackList(context.Context, *api.ListCases) (*emptypb.Empty, error)
+}
+
+type WhiteList interface {
 	AddToWhiteList(context.Context, *api.ListCases) (*emptypb.Empty, error)
 	RemoveFromWhiteList(context.Context, *api.ListCases) (*emptypb.Empty, error)
 	ExistInWhiteList(context.Context, *api.ListCases) (*api.ExistInListResponse, error)
+}
+
+type BlackList interface {
+	AddToBlackList(context.Context, *api.ListCases) (*emptypb.Empty, error)
+	RemoveFromBlackList(context.Context, *api.ListCases) (*emptypb.Empty, error)
 	ExistInBlackList(context.Context, *api.ListCases) (*api.ExistInListResponse, error)
-	mustEmbedUnimplementedAntiBruteForceServiceServer()
 }
 
 func NewUseCase(limiter *lickybucket.Limiter, storage *redis.StorageRedis) *AntiBruteForceCase {
