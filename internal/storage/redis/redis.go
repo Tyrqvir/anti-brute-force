@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strconv"
 
 	"github.com/Tyrqvir/anti-brute-force/internal/config"
 	"github.com/Tyrqvir/anti-brute-force/internal/logger"
@@ -80,8 +81,8 @@ func (s *StorageRedis) StoreLimitByPassword(ctx context.Context, password string
 	return res, nil
 }
 
-func (s *StorageRedis) StoreLimitByIP(ctx context.Context, ip string) (*redis_rate.Result, error) {
-	res, err := s.limiter.Allow(ctx, ip, redis_rate.PerMinute(s.config.RateLimit.IPPerMinute+1))
+func (s *StorageRedis) StoreLimitByIP(ctx context.Context, ip uint32) (*redis_rate.Result, error) {
+	res, err := s.limiter.Allow(ctx, strconv.Itoa(int(ip)), redis_rate.PerMinute(s.config.RateLimit.IPPerMinute+1))
 	if err != nil {
 		return nil, fmt.Errorf("error on set rate limit by ip: %w", err)
 	}

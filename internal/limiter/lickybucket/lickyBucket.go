@@ -2,6 +2,7 @@ package lickybucket
 
 import (
 	"context"
+	"strconv"
 	"sync"
 
 	"github.com/Tyrqvir/anti-brute-force/internal/limiter"
@@ -135,6 +136,6 @@ func (l *Limiter) LimitByPassword(ctx context.Context, request *api.AccessCheckR
 }
 
 func (l *Limiter) ClearBucket(ctx context.Context, request *api.ResetBucketRequest) {
-	l.storage.FlushLimitByBucket(ctx, request.GetIp())
+	l.storage.FlushLimitByBucket(ctx, strconv.Itoa(int(request.GetIp())))
 	l.storage.FlushLimitByBucket(ctx, request.GetLogin())
 }
