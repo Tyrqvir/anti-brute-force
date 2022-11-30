@@ -23,7 +23,7 @@ func dummyRequest() *api.AccessCheckRequest {
 	return &api.AccessCheckRequest{
 		Login:    "login",
 		Password: "password",
-		Ip:       "192.168.1.1",
+		Ip:       3232235777, // "192.168.1.1"
 	}
 }
 
@@ -157,7 +157,8 @@ func TestLimiter_limitByIP(t *testing.T) { //nolint:dupl
 		{
 			name: "normal access check by ip",
 			prepare: func(s *mocks.Storage) {
-				s.On("StoreLimitByIP", ctx, "192.168.1.1").Return(&redis_rate.Result{
+				var ip uint32 = 3232235777
+				s.On("StoreLimitByIP", ctx, ip).Return(&redis_rate.Result{
 					Allowed: 1,
 				}, nil)
 			},
@@ -170,7 +171,8 @@ func TestLimiter_limitByIP(t *testing.T) { //nolint:dupl
 		{
 			name: "ddos access check by ip",
 			prepare: func(s *mocks.Storage) {
-				s.On("StoreLimitByIP", ctx, "192.168.1.1").Return(&redis_rate.Result{
+				var ip uint32 = 3232235777
+				s.On("StoreLimitByIP", ctx, ip).Return(&redis_rate.Result{
 					Allowed: 0,
 				}, nil)
 			},
@@ -209,7 +211,8 @@ func TestLimiter_IsLimit(t *testing.T) {
 		result := &redis_rate.Result{
 			Allowed: 1,
 		}
-		store.On("StoreLimitByIP", ctx, "192.168.1.1").Return(result, nil)
+		var ip uint32 = 3232235777
+		store.On("StoreLimitByIP", ctx, ip).Return(result, nil)
 		store.On("StoreLimitByLogin", ctx, "login").Return(result, nil)
 		store.On("StoreLimitByPassword", ctx, "password").Return(result, nil)
 

@@ -69,11 +69,11 @@ func (_m *Storage) StoreIPToListByKind(ctx context.Context, kindOfList storage.K
 }
 
 // StoreLimitByIP provides a mock function with given fields: ctx, ip
-func (_m *Storage) StoreLimitByIP(ctx context.Context, ip string) (*redis_rate.Result, error) {
+func (_m *Storage) StoreLimitByIP(ctx context.Context, ip uint32) (*redis_rate.Result, error) {
 	ret := _m.Called(ctx, ip)
 
 	var r0 *redis_rate.Result
-	if rf, ok := ret.Get(0).(func(context.Context, string) *redis_rate.Result); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, uint32) *redis_rate.Result); ok {
 		r0 = rf(ctx, ip)
 	} else {
 		if ret.Get(0) != nil {
@@ -82,7 +82,7 @@ func (_m *Storage) StoreLimitByIP(ctx context.Context, ip string) (*redis_rate.R
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, uint32) error); ok {
 		r1 = rf(ctx, ip)
 	} else {
 		r1 = ret.Error(1)

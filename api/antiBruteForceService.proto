@@ -7,7 +7,7 @@ option go_package = "../pkg/anti-brute-force/api";
 message AccessCheckRequest {
   string login = 1;
   string password = 2;
-  string ip = 3;
+  uint32 ip = 3;
 }
 
 message AccessCheckResponse {
@@ -16,7 +16,7 @@ message AccessCheckResponse {
 
 message ResetBucketRequest {
   string login = 1;
-  string ip = 2;
+  uint32 ip = 2;
 }
 
 message AddToBlackListRequest {

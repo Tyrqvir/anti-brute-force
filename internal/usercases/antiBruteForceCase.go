@@ -6,6 +6,7 @@ import (
 
 	"github.com/Tyrqvir/anti-brute-force/internal/limiter/lickybucket"
 	"github.com/Tyrqvir/anti-brute-force/internal/storage/redis"
+	"github.com/Tyrqvir/anti-brute-force/internal/transformer"
 	"github.com/Tyrqvir/anti-brute-force/proto/api"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -49,7 +50,7 @@ func (u AntiBruteForceCase) Authorisation(
 	ctx context.Context,
 	request *api.AccessCheckRequest,
 ) (*api.AccessCheckResponse, error) {
-	ip := net.ParseIP(request.GetIp())
+	ip := transformer.Int2ip(request.GetIp())
 
 	accessibility, notExistInLists := u.storage.CheckAccessibilityByLists(ctx, ip)
 
