@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  server:
+    build:
+      context: ./..
+      dockerfile: ./build/Dockerfile
+      args:
+        BIN_FILE: "/opt/server/server"
+        APP_FOLDER: "server"
+        CONFIG_FILE_EXTERNAL: "./configs/config.toml"
+    container_name: server
+    environment:
+      REDIS_DSN: "redis:6379"
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - ${GRPC_ADDRESS}:8889
+
+  redis:
+    image: redis:7.0.5
+    container_name: redis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+
+  redis-ui:
+    image: rediscommander/redis-commander
+    container_name: redis-ui
+    ports:
+      - "8081:8081"
+    environment:
+      REDIS_HOSTS: redis
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis:
+    name: redis_data

@@ -1,0 +1,69 @@
+run:
+  tests: true
+  skip-dirs:
+    - tests
+    - proto
+    - internal/mocks
+
+linters-settings:
+  funlen:
+    lines: 150
+    statements: 80
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    #- deadcode # deprecated (since v1.49.0)
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - funlen
+    - gci
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - gofumpt
+    - goheader
+    - gomoddirectives
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    #- ifshort # deprecated (since v1.49.0)
+    - importas
+    - ineffassign
+    - lll
+    - makezero
+    - misspell
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    #- rowserrcheck # deprecated (since v1.49.0)
+    #- sqlclosecheck # deprecated (since v1.49.0)
+    - staticcheck
+    #- structcheck # deprecated (since v1.49.0)
+    - stylecheck
+    - tagliatelle
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    #- varcheck # deprecated (since v1.49.0)
+    #- wastedassign # deprecated (since v1.49.0)
+    - whitespace
